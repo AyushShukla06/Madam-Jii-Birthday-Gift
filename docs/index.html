@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MADAM JII'S BIRTHDAY GIFT</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#ffeef4;
+      --pink:#ffb6d3;
+      --accent:#ff77b1;
+      --text:#3a2b2e;
+      --glass:rgba(255,255,255,0.6);
+    }
+    *{box-sizing:border-box;}
+    html,body{height:100%;margin:0;font-family:Poppins,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;background:var(--bg);color:var(--text);}
+    a{color:inherit;}
+
+    .bg-hearts{position:fixed;inset:0;overflow:hidden;z-index:0;
+      background:radial-gradient(circle at 10% 10%,rgba(255,255,255,0.6),transparent 10%),var(--bg);}
+    .heart{position:absolute;width:22px;height:22px;transform:rotate(-45deg);
+      background:var(--pink);border-radius:4px 4px 0 0;opacity:0.9;animation:floatUp linear infinite;}
+    .heart:before,.heart:after{content:'';position:absolute;width:22px;height:22px;border-radius:50%;background:var(--pink);}
+    .heart:before{top:-11px;left:0;}
+    .heart:after{left:11px;top:0;}
+    @keyframes floatUp{
+      from{transform:translateY(100vh) rotate(-45deg);opacity:0;}
+      10%{opacity:0.9;}
+      to{transform:translateY(-30vh) rotate(-45deg);opacity:0;}
+    }
+
+    .wrap{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;z-index:1;}
+    .stage{width:100%;max-width:860px;background:linear-gradient(180deg,rgba(255,255,255,0.6),rgba(255,255,255,0.4));border-radius:20px;
+      padding:48px;box-shadow:0 10px 30px rgba(0,0,0,0.08);backdrop-filter:blur(6px);}
+    .section{min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:22px;transition:all .6s ease;
+      opacity:0;transform:translateY(20px);pointer-events:none;padding:20px 0;/*optional,adds spacing top/bottom*/}
+    .section.active{opacity:1;transform:none;pointer-events:auto;}
+
+    .badge{width:280px;height:280px;border-radius:50%;background:linear-gradient(145deg,var(--glass),rgba(255,255,255,0.35));
+      display:flex;align-items:center;justify-content:center;border:6px solid rgba(255,255,255,0.7);
+      box-shadow:0 0 25px rgba(255,183,213,0.3);}
+    .badge img{width:95%;height:95%;border-radius:75%;object-fit:cover;image-rendering:-webkit-optimize-contrast;
+      filter:brightness(1.05) contrast(1.1) saturate(1.1);transition:all .6s ease;}
+
+    .btn-row{display:flex;gap:14px;align-items:center;margin-top:auto;/* pushes it to the bottom of the section */}
+    .btn{background:var(--accent);border:none;padding:12px 20px;border-radius:999px;color:white;font-weight:600;
+      cursor:pointer;box-shadow:0 6px 18px rgba(255,120,170,0.14);transition:transform .18s ease;}
+    .btn.secondary{background:transparent;border:2px solid rgba(58,43,46,0.08);color:var(--text);}
+    .btn:active{transform:scale(.98);}
+
+    .quote{font-size:22px;max-width:720px;text-align:center;color:var(--text);line-height:1.45;padding:10px;}
+    .quote-title{font-size:24px;color:var(--accent);font-family:'Great Vibes',cursive;}
+    .friend-title{font-family:'Great Vibes',cursive;font-size:36px;color:var(--accent);text-align:center;}
+    .friend-sub{font-size:22px;font-family: 'Parisienne', cursive;text-align:center;margin-top:8px;}
+
+    .choices{position:relative;width:100%;max-width:540px;height:120px;margin-top:20px;}
+    .btn-yes,.btn-no{position:absolute;min-width:120px;}
+
+    .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);
+      z-index:50;opacity:0;pointer-events:none;transition:opacity .25s ease;}
+    .overlay.show{opacity:1;pointer-events:auto;}
+    .popup{background:white;padding:28px;border-radius:14px;text-align:center;max-width:420px;}
+
+    @media (max-width:520px){
+      .badge{width:200px;height:200px;}
+      .friend-title{font-size:30px;}
+      .friend-sub{font-size:20px;}
+      .quote{font-size:20px;}
+      .quote-title{font-size:22px;}
+    }
+
+    .bottom-quote{position:absolute;right:40px;bottom:30px;font-size:25px;color:var(--accent);
+      opacity:0.8;font-family:'Poppins',sans-serif;}
+    .quote[contenteditable="true"]{border:2px dashed rgba(255,119,177,0.4);padding:16px;border-radius:12px;
+      background:rgba(255,255,255,0.5);outline:none;transition:border-color .3s ease;}
+    .quote[contenteditable="true"]:focus{border-color:var(--accent);}
+    .fade-text {
+      opacity: 0;
+     position:relative;
+     top: 0;
+     text-align: center;
+      transition: opacity 1.2s ease;
+     font-family: 'Great Vibes', cursive;
+     font-size: 70px;
+     color: #ff77b1;
+     margin-bottom: 20px; /* add spacing from buttons */
+    }
+
+    #sec-4 {
+      position: relative;
+     overflow: hidden;
+     min-height: 400px
+    }
+
+    .fade-overlay {
+     position: fixed;
+      inset: 0;
+     background: black;
+     opacity: 0;
+     pointer-events: none;
+     transition: opacity 1s ease;
+     z-index: 100;
+    }
+    .fade-overlay.show {
+     opacity: 1;
+     pointer-events: auto;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="bg-hearts" aria-hidden="true"></div>
+
+<div class="wrap">
+  <main class="stage" role="main">
+
+    <!-- SECTION 0 -->
+    <section id="sec-0" class="section active">
+     <div
+      style="flex-grow:1;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;padding-top:60px;position:relative;min-height:300px;"
+     >
+      <div class="friend-title fade-text" id="line1">
+      ✨✨<br>Yeyeyy!! It's your <br>special day 🍻🍻
+      </div>
+      <div class="friend-title fade-text" id="line2">
+      So, I tried to make something special for you as you are special to me😊😊
+      </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:40px;">
+     <button class="btn" data-target="1">Next →</button>
+      </div>
+    </section>
+
+    <!-- SECTION 1: Pre-Celebration after Section 0 -->
+    <section id="sec-1" class="section">
+      <div style="text-align:center; margin-top:80px;">
+     <div class="friend-title" style="font-size:70px;">Are you ready Madam Jii?</div>
+      <button class="btn" id="readyBtn" style="margin-top:40px;">Yes 💖</button>
+     </div>
+    </section>
+
+
+
+    <!-- SECTION 2 -->
+    <section id="sec-2" class="section">
+      <div class="badge">
+        <img src="stuti.jpg.png" alt="Stuti" id="badge-img">
+      </div>
+      <div id="birthday-text" style="margin-top:20px;font-family:'Great Vibes',cursive;font-size:50px;color:#ff77b1;text-align:center;">
+        Happiest Birthday Stutiii 💞💞<br><br>Stay Blessed and Happy💓💓
+      </div>
+      <br>
+      <br>
+      <br>
+      <br>
+      <div class="btn-row">
+        <button class="btn secondary" data-target="0">← Previous</button>
+        <button class="btn" data-target="3">Next →</button>
+      </div>
+      <div style="font-size:25px;" class="quote-title bottom-quote">got only this photo of yours</div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section id="sec-3" class="section">
+      <div style="font-size:70px;" class="quote-title">A small message for You</div>
+      <div id="quote-text" class="quote">
+        Happiest Birthday Madamjiiii...i hope this small present may make you smile for a bit, bss yeh aakri jgh bacchi thi jahan pr mai aapko kch keh skta tha,thoda ar pareshan kr skta tha.....baaki toh aapne har jgh block kra hua h mujhee.....khair choriye Today is your special day so may god fulfill all your wishes , all your dreams come true.....enjoy the night.....keep smiling.....<br>also yaar I know this is somehow very much creepy, mtlb ekdm peeche hi pdd gya hoon tmhree, pr krr bhi arr kya hi skta.....yaar i just wanna say that ki give me your some time atleast 1 month baat krkee dekhte h if things workout wellngood if didn't ,it will be my bad luck.....also jyada nhi sirf 1 hour a day (you only decide the time..jb bhi aap free ho) kyuki mere bhi semester exams hongai Nov ending mai toh I also have to study...baaki yaar nothing much special, khd hi dekh lo thodi bht coding aati, seedha saadha sa baacha hoon(very much introvert), academics mai bhi theek hi chl rha hoon baaki poora hr cheez ko lekar sorted rehta hoon ....thoda bht baat krlo yaar khd hi pata lag jaayega and all of the above agr tmko na smj aaye or maybe kya paata mai tmse baat krun arr tmm hi mujhe naa psnd aao(hoga nhi waise mujhe pata h) then we could be just good friend like whenever either of us require any kind of help ,can help each other aur aurr...aurrr toh kch nhi jo bhi response ho bata dena, pata nhi itna kch socha tha likne kai liye yaad hi nhi aarha abb... haan...atleast yeh jo aapka birthday gift h yeh kaisa laga yhi bata dijiyega thoda bht dekh lena agr upr neeche ho toh kyuki jitni coding 3saal mai seekhi sb use hogyi, chatgpt deepseek perplexity gemini sbb used h (I hope accha laga ho) ...GHOST mtt kriyega plzz jo bhi ho clear kr dijiyega agr aap abbhi bol degi toh mai iske baad aapko ekdm nhi preshan krunga<br> (I hope so).....<br> So, yaah that's all Enjoy the Day!!!!<br>ek feedback form attach rhega bhr dena plzz<br> THANK YOU!!✨✨
+      </div>
+      <div class="btn-row">
+        <button class="btn secondary" data-target="2">← Previous</button>
+        <button class="btn" data-target="4">Continue →</button>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section id="sec-4" class="section" style="justify-content:center;">
+      <div style="font-size:60px;" class="friend-title" id="friend-title">Let's start with friendship 💫</div>
+      <div style="font-size:40px;" class="friend-sub" id="friend-sub">Will you be my friend?</div>
+
+      <div class="choices" id="choice-area">
+        <button id="yesBtn" class="btn btn-yes" style="left:20px;top:30px;">Yes 💖</button>
+        <button id="noBtn" class="btn btn-no" style="right:20px;top:30px;">No 🙈</button>
+      </div>
+
+      <div class="btn-row" style="margin-top:20px;">
+        <button class="btn secondary" data-target="3">← Previous</button>
+        
+      </div>
+    </section>
+
+
+  </main>
+</div>
+
+<!-- Overlay popup -->
+<div id="overlay" class="overlay" role="dialog" aria-modal="true">
+  <div class="popup">
+    <h2 id="popup-title">Yayyy!!!</h2>
+    <p id="popup-msg">You made my day — Thank You! 💕😊<br>"" Please unblock me on insta 😅""</p>
+    <div style="margin-top:16px;"><button class="btn" id="closeOverlay">Close</button></div>
+  </div>
+</div>
+
+<script>
+(function makeHearts(){
+  const container = document.querySelector('.bg-hearts');
+  for(let i=0;i<18;i++){
+    const h=document.createElement('div');
+    h.className='heart';
+    const size=Math.random()*22+12;
+    h.style.width=size+'px';
+    h.style.height=size+'px';
+    h.style.left=Math.random()*100+'%';
+    h.style.animationDuration=(6+Math.random()*10)+'s';
+    h.style.top=Math.random()*100+'%';
+    container.appendChild(h);
+  }
+})();
+
+const sections = Array.from(document.querySelectorAll('.section'));
+
+// Show Section function + Section 4 animation
+function showSection(idx) {
+  sections.forEach((s, i) => s.classList.toggle('active', i === idx));
+  const currentId = sections[idx].id;
+  //when section 0 is shown, restart the entire sequence clearly
+  if (currentId === "sec-0") {
+    resetAllStates();
+    playSection0Animation();//start the "yeyeyyy !! message
+  }
+  //keep the other triggers if needed
+  if (currentId === "sec-1"){
+    const readyBtn = document.getElementById('readyBtn');
+    if (readyBtn) readyBtn.style.display = 'inline-block'; // ensure visible
+  }
+}
+
+function resetAllStates() {
+  // 1️⃣ Remove only dynamic buttons (those added via JS)
+  document.querySelectorAll('.btn.dynamic').forEach(btn => btn.remove());
+
+  // 2️⃣ Clear overlays or balloons if any remain
+  const overlay = document.querySelector('.fade-overlay');
+  if (overlay) overlay.classList.remove('show');
+
+  const balloonContainer = document.querySelector('.balloon-container');
+  if (balloonContainer) balloonContainer.remove();
+
+  // 3️⃣ Reset opacity/display of all sections
+  sections.forEach(s => {
+    s.style.opacity = '';
+    s.style.display = '';
+  });
+  // 4️⃣ Make sure the "Yes 💖" button reappears when we restart
+  const readyBtn = document.getElementById('readyBtn');
+  if (readyBtn) {
+    readyBtn.style.display = 'inline-block'; // restore visibility
+    readyBtn.style.opacity = '0';
+    readyBtn.style.transition = 'opacity 1s ease';
+    setTimeout(() => (readyBtn.style.opacity = '1'), 100);
+  }
+}
+
+
+// Button click binding
+document.querySelectorAll('.btn[data-target]').forEach(b => {
+  b.addEventListener('click', () => {
+    const t = Number(b.getAttribute('data-target'));
+    showSection(t);
+  });
+});
+
+const noBtn=document.getElementById('noBtn');
+const yesBtn=document.getElementById('yesBtn');
+const area=document.getElementById('choice-area');
+let noClicks=0;
+
+function moveNo(){
+  if(noClicks>=10)return;
+  const rect=area.getBoundingClientRect();
+  const btnRect=noBtn.getBoundingClientRect();
+  const yesX=yesBtn.offsetLeft;
+  const yesY=yesBtn.offsetTop;
+  const yesWidth=yesBtn.offsetWidth;
+  const yesHeight=yesBtn.offsetHeight;
+  const padding=20;
+  const maxX=rect.width-btnRect.width-padding;
+  const maxY=rect.height-btnRect.height-padding;
+  let x,y,safe=false;
+  while(!safe){
+    x=Math.random()*maxX;
+    y=Math.random()*maxY;
+    const overlapX=x+btnRect.width>yesX&&x<yesX+yesWidth;
+    const overlapY=y+btnRect.height>yesY&&y<yesY+yesHeight;
+    safe=!(overlapX&&overlapY);
+  }
+  const rotate=Math.random()*360;
+  noBtn.style.left=x+'px';
+  noBtn.style.top=y+'px';
+  noBtn.style.transform=`rotate(${rotate}deg)`;
+  noClicks++;
+}
+
+noBtn.addEventListener('pointerenter',moveNo);
+noBtn.addEventListener('click',()=>{if(noClicks<5)return;alert('Oh no 😅 — maybe try the Yes button?');});
+yesBtn.addEventListener('click',()=>{document.getElementById('overlay').classList.add('show');});
+document.getElementById('closeOverlay').addEventListener('click',()=>{document.getElementById('overlay').classList.remove('show');});
+window.addEventListener('resize',()=>{noBtn.style.left='';noBtn.style.top='';noBtn.style.transform='';});
+
+// Section 0 fade animation
+function playSection0Animation() {
+  const line1 = document.getElementById("line1");
+  const line2 = document.getElementById("line2");
+  if (!line1 || !line2) return;
+
+  line1.style.opacity = "0";
+  line2.style.opacity = "0";
+
+  setTimeout(() => { line1.style.opacity = "1"; }, 100);
+  setTimeout(() => {
+    line1.style.opacity = "0";
+    setTimeout(() => { line2.style.opacity = "1"; }, 1200);
+  }, 3000);
+}
+
+// Play animation if Section 0 is first visible
+window.addEventListener("load", () => {
+  const sec0 = document.getElementById("sec-0");
+  if (sec0 && sec0.classList.contains("active")) playSection0Animation();
+});
+const readyBtn = document.getElementById('readyBtn');
+const fadeOverlay = document.createElement('div');
+fadeOverlay.id = 'fade';
+fadeOverlay.className = 'fade-overlay';
+document.body.appendChild(fadeOverlay);
+
+// Step 0: After Section 0, show Section 1
+readyBtn.addEventListener('click', () => {
+  showSection(1); // Section 1 visible
+  const sec1 = document.getElementById('sec-1');
+  sec1.style.opacity = '1';
+  sec1.style.display = 'block';
+  setTimeout(() => sec1.style.opacity = '1', 50);
+
+  // Remove Next button during animation
+  readyBtn.style.display = 'none';
+
+  // Wait for 1 second, then fade out Section 1
+  setTimeout(() => {
+    sec1.style.transition = 'opacity 1s ease';
+    sec1.style.opacity = '0';
+    // After fade-out finishes, hide it completely
+    setTimeout(() => {
+      sec1.style.display = 'none';
+      showLightsOn(); // Now trigger the lights on sequence
+    }, 1000);
+  }, 1000); // slight pause before fading out
+});
+
+// Step 1: Lights On
+function showLightsOn() {
+  fadeOverlay.classList.add('show');
+  const btn = document.createElement('button');
+  btn.className = 'btn dynamic';
+  btn.textContent = 'Lights On';
+  btn.style.position = 'absolute';
+  btn.style.top = '50%';
+  btn.style.left = '50%';
+  btn.style.transform = 'translate(-50%, -50%)';
+  fadeOverlay.appendChild(btn);
+
+  btn.addEventListener('click', () => {
+    fadeOverlay.classList.remove('show');
+    setTimeout(() => fadeOverlay.innerHTML = '', 1000);
+    document.body.style.background = '#ffeef4';
+    showPlayMusic();
+  });
+}
+
+// Step 2: Play Music
+function showPlayMusic() {
+  const btn = document.createElement('button');
+  btn.className = 'btn dynamic';
+  btn.textContent = 'Play Music';
+  btn.style.position = 'fixed';
+  btn.style.top = '50%';
+  btn.style.left = '50%';
+  btn.style.transform = 'translate(-50%, -50%)';
+  btn.style.zIndex = '200';  // ensures it’s on top
+
+  // Step 3: fade-in effect
+  btn.style.opacity = '0';
+  btn.style.transition = 'opacity 1s ease';
+  document.body.appendChild(btn);
+  setTimeout(() => { btn.style.opacity = '1'; }, 50); // fade in after 50ms
+
+  // Click event
+  btn.addEventListener('click', () => {
+    const audio = new Audio('madamjiisong.mp3'); // replace with your music file
+    audio.loop = true;
+    audio.play();
+    btn.remove();
+    showFlyBalloons();
+  });
+}
+
+
+// Step 3: Fly the Balloons
+function showFlyBalloons() {
+  const btn = document.createElement('button');
+  btn.className = 'btn dynamic';
+  btn.textContent = 'Fly the Balloons 🎈';
+  btn.style.position = 'fixed';
+  btn.style.top = '50%';
+  btn.style.left = '50%';
+  btn.style.transform = 'translate(-50%, -50%)';
+  btn.style.zIndex = '300'; // higher than everything else
+  btn.style.opacity = '0';
+  btn.style.transition = 'opacity 1s ease';
+  document.body.appendChild(btn);
+
+  // fade in nicely after a short delay
+  setTimeout(() => { btn.style.opacity = '1'; }, 100);
+
+  btn.addEventListener('click', () => {
+    btn.style.opacity = '0'; // fade out
+    setTimeout(() => btn.remove(), 800);
+
+    // 🎯 Show Section 2 immediately
+    showSection(2);
+
+    // Launch balloons independently
+   launchBalloons();
+  });
+}
+
+// Step 4: Balloon animation + redirect
+function launchBalloons() {
+  const count = 200;
+  for (let i = 0; i < count; i++) {
+    const b = document.createElement('div');
+    b.className = 'heart'; 
+    const size = 20 + Math.random() * 40; // random size 20–60px
+    b.style.width = '30px';
+    b.style.height = '40px';
+    b.style.left = Math.random() * 100 + '%';
+    b.style.background = 'linear-gradient(to top, #ff77b1, #ffeef4)';
+    b.style.borderRadius = '50% 50% 50% 50%';
+    b.style.position = 'fixed';
+    b.style.bottom = '-50px';
+    b.style.zIndex = '50';
+    document.body.appendChild(b);
+
+    const duration = 5 + Math.random() * 5;
+    b.style.transition = `transform ${duration}s linear, opacity ${duration}s linear`;
+
+    setTimeout(() => {
+      b.style.transform = `translateY(-120vh) rotate(${Math.random() * 360}deg)`;
+      b.style.opacity = '0';
+    }, 50);
+
+    setTimeout(() => b.remove(), (duration + 1) * 1000);
+  }
+
+  setTimeout(() => showSection(2), 4000); // redirect to Section 2
+}
+
+
+</script>
+
+</body>
+</html>
